@@ -1,0 +1,10 @@
+Install in Eclipse as a plugin.
+
+In Eclipse:
+
+Window > Show View > Other ... and choose "Ruby Output"
+
+That brings up a view that shows the current selection run through a filter defined in ${the root of your workspace}/ruby_filter.rb.  A sample ruby_filter.rb is provided
+that runs the current selection through and html-escape filter.
+
+The Ruby Output window has a single menu item to reload the filter.  Select that menu item to pick up any changes you make to ruby_filter.
