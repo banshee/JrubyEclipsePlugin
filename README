@@ -8,3 +8,6 @@ That brings up a view that shows the current selection run through a filter defi
 that runs the current selection through and html-escape filter.
 
 The Ruby Output window has a single menu item to reload the filter.  Select that menu item to pick up any changes you make to ruby_filter.
+
+A built version is available from http://jrubyeclipseplugin.s3.amazonaws.com/JrubyEclipsePlugin_1.0.1.jar?AWSAccessKeyId=1XAFRSJH5JTMXX7MFP82&Expires=1403023422&Signature=s2BCVdZkl2IF6TBsCYfqDF7pwiE%3D
+Just copy that file into your Eclipse dropins directory.
