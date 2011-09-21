@@ -26,9 +26,6 @@ public class Activator extends AbstractUIPlugin {
   @Override
   public void start(BundleContext context) throws Exception {
     super.start(context);
-    plugin = this;
-    Status s = new Status(IStatus.INFO, PLUGIN_ID, "somestuff ");
-    getLog().log(s);
   }
 
   @Override
