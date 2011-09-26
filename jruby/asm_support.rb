@@ -26,6 +26,11 @@ module AsmSupport
     def get_result
       @result
     end
+
+    def method_missing name, *args
+      return self if name.to_s =~ /^visit.*/
+      super
+    end
   end
 
   class PrinterVisitor < GenericVisitor
@@ -61,11 +66,61 @@ module AsmSupport
       @result << "def #{name} *args\nend\n\n"
       self
     end
+  end
 
-    def method_missing name, *args
-      return self if name.to_s =~ /^visit.*/
-      super
+  class DependencyVisitor < GenericVisitor
+    def initialize
+      @result = Hash.new {|hash, k| hash[k] = {}}
+      @current_class = nil
     end
+
+    def visit version, access, name, signature, super_name, interfaces
+      #      int version,
+      #      int access,
+      #      String name,
+      #      String signature,
+      #      String superName,
+      #      String[] interfaces);
+      @current_class = name
+      depends_on name, super_name
+      interfaces.each do |i|
+        depends_on name, i
+      end
+      self
+    end
+
+    def depends_on klass, d
+      return if klass == d
+      @result[klass][d] = 1
+    end
+
+    def standard_instruction opcode, type, *args
+      depends_on @current_class, type
+      self
+    end
+
+    def visit_annotation first_arg, second_arg, *args
+      if String === second_arg
+        depends_on @current_class, second_arg
+      else
+        depends_on @current_class, first_arg
+      end
+      self
+    end
+
+    def visit_single_arg t
+      depends_on @current_class, t
+    end
+
+#    alias :visitTypeInsn :standard_instruction
+#    alias :visitFieldInsn :standard_instruction
+#    alias :visitMethodInsn :standard_instruction
+#    alias :visitEnum :standard_instruction
+#    
+#    alias :visitFormalTypeParameter :standard_instruction
+#    alias :visitTypeVariable :standard_instruction
+#    alias :visitClassType :standard_instruction
+#    alias :visitInnerClassType :standard_instruction
   end
 
   class RubyInterfaceImplementationBuilder
