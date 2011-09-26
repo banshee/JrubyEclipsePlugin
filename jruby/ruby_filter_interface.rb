@@ -20,6 +20,10 @@ class FilterCallback
   include AsmSupport
   include  Java::ComRestphoneJrubyeclipse::IJrubyFilter
 
+
+  # TBD This works, but isn't really correct.  See
+  # http://stackoverflow.com/questions/7542704/in-an-eclipse-plugin-whats-the-right-way-to-get-the-class-file-that-correspond
+  # for how to improve this.
   def selection_to_path selection
     path = selection.get_paths.first
 
