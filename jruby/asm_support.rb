@@ -99,18 +99,18 @@ module AsmSupport
       self
     end
 
-    def visit_annotation first_arg, second_arg, *args
-      if String === second_arg
-        depends_on @current_class, second_arg
-      else
-        depends_on @current_class, first_arg
-      end
-      self
-    end
-
-    def visit_single_arg t
-      depends_on @current_class, t
-    end
+#    def visit_annotation first_arg, second_arg, *args
+#      if String === second_arg
+#        depends_on @current_class, second_arg
+#      else
+#        depends_on @current_class, first_arg
+#      end
+#      self
+#    end
+#
+#    def visit_single_arg t
+#      depends_on @current_class, t
+#    end
 
 #    alias :visitTypeInsn :standard_instruction
 #    alias :visitFieldInsn :standard_instruction
