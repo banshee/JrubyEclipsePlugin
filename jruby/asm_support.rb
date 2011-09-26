@@ -74,19 +74,24 @@ module AsmSupport
       @current_class = nil
     end
 
-    def visit version, access, name, signature, super_name, interfaces
+    def visit *args
       #      int version,
       #      int access,
       #      String name,
       #      String signature,
       #      String superName,
       #      String[] interfaces);
-      @current_class = name
-      depends_on name, super_name
-      interfaces.each do |i|
-        depends_on name, i
+      if (args.length > 2)
+        name = args[2]
+        super_name = args[4]
+        interfaces = args[5]
+        @current_class = name
+        depends_on name, super_name
+        interfaces.each do |i|
+          depends_on name, i
+        end
+        self
       end
-      self
     end
 
     def depends_on klass, d
@@ -99,28 +104,28 @@ module AsmSupport
       self
     end
 
-#    def visit_annotation first_arg, second_arg, *args
-#      if String === second_arg
-#        depends_on @current_class, second_arg
-#      else
-#        depends_on @current_class, first_arg
-#      end
-#      self
-#    end
-#
-#    def visit_single_arg t
-#      depends_on @current_class, t
-#    end
+    def visit_annotation first_arg, second_arg, *args
+      if String === second_arg
+        depends_on @current_class, second_arg
+      else
+        depends_on @current_class, first_arg
+      end
+      self
+    end
 
-#    alias :visitTypeInsn :standard_instruction
-#    alias :visitFieldInsn :standard_instruction
-#    alias :visitMethodInsn :standard_instruction
-#    alias :visitEnum :standard_instruction
-#    
-#    alias :visitFormalTypeParameter :standard_instruction
-#    alias :visitTypeVariable :standard_instruction
-#    alias :visitClassType :standard_instruction
-#    alias :visitInnerClassType :standard_instruction
+    def visit_single_arg t
+      depends_on @current_class, t
+    end
+
+    alias :visitTypeInsn :standard_instruction
+    alias :visitFieldInsn :standard_instruction
+    alias :visitMethodInsn :standard_instruction
+    alias :visitEnum :standard_instruction
+
+    alias :visitFormalTypeParameter :standard_instruction
+    alias :visitTypeVariable :standard_instruction
+    alias :visitClassType :standard_instruction
+    alias :visitInnerClassType :standard_instruction
   end
 
   class RubyInterfaceImplementationBuilder
