@@ -94,14 +94,42 @@ module AsmSupport
       end
     end
 
+    def visit_method *args
+      signature = args[2]
+      name = args[1]
+      return_type = Type.get_return_type signature
+      begin
+        pp "xxr", signature, return_type, (return_type.get_internal_name)
+        #        dep = (return_type.get_internal_name).sub "\$class$", ""
+        depends_on @current_class, return_type.get_internal_name rescue self
+      rescue
+      end
+    end
+
+    def normalize_class_name c
+      result = c.to_s.sub %r(\$class$), ""
+      result = result.sub %r(\[?L?), ""
+      result = result.sub ';', ''
+      result
+    end
+
     def depends_on klass, d
-      return if klass == d
-      @result[klass][d] = 1
+      return unless d
+      return self if klass == d
+      k = normalize_class_name klass
+      d = normalize_class_name d
+      @result[k][d] = 1
+      pp "added ", k, d
+      self
     end
 
     def standard_instruction opcode, type, *args
       depends_on @current_class, type
       self
+    end
+
+    def visit_single_arg t
+      depends_on @current_class, t
     end
 
     def visit_annotation first_arg, second_arg, *args
@@ -113,8 +141,18 @@ module AsmSupport
       self
     end
 
-    def visit_single_arg t
-      depends_on @current_class, t
+    #String name,
+    #String outerName,
+    #String innerName,
+    #int access);
+    def visitInnerClass name, outer_name, inner_name, access
+      depends_on @current_class, name
+      depends_on @current_class, outer_name
+    end
+
+    # void visitMethodInsn(int opcode, String owner, String name, String desc);
+    def visit_method_insn opcode, owner, name, desc
+      depends_on @current_class, owner
     end
 
     alias :visitTypeInsn :standard_instruction
