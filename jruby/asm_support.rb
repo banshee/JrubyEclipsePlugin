@@ -99,15 +99,13 @@ module AsmSupport
       name = args[1]
       return_type = Type.get_return_type signature
       begin
-        pp "xxr", signature, return_type, (return_type.get_internal_name)
-        #        dep = (return_type.get_internal_name).sub "\$class$", ""
         depends_on @current_class, return_type.get_internal_name rescue self
       rescue
       end
     end
 
     def normalize_class_name c
-      result = c.to_s.sub %r(\$class$), ""
+      result = c.to_s
       result = result.sub %r(\[?L?), ""
       result = result.sub ';', ''
       result
@@ -119,7 +117,6 @@ module AsmSupport
       k = normalize_class_name klass
       d = normalize_class_name d
       @result[k][d] = 1
-      pp "added ", k, d
       self
     end
 
