@@ -1,7 +1,5 @@
 package com.restphone.jrubyeclipse;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -15,7 +13,7 @@ public class Activator extends AbstractUIPlugin {
   public static final String PLUGIN_ID = "JrubyEclipsePlugin"; //$NON-NLS-1$
 
   // The shared instance
-  private static Activator plugin;
+  private static Activator   plugin;
 
   /**
    * The constructor
