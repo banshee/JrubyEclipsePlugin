@@ -1,5 +1,6 @@
 require 'java'
 require 'asm-3.3.1'
+require 'pp'
 
 module AsmSupport
   # This lets me type org.objectweb.asm::... instead of Java::OrgObjectwebAsm::...
@@ -37,7 +38,7 @@ module AsmSupport
     def method_missing name, *args
       name_string = name.to_s
       if name_string =~ /visit.*/
-        @result << "#{name}\t#{args}" << "\n"
+        @result << "#{name}\t#{args.pretty_inspect}"
         self
       else
         super
@@ -169,8 +170,15 @@ module AsmSupport
     end
 
     def build visitor_object, file_input_stream
-      class_reader = org.objectweb.asm::ClassReader.new file_input_stream
-      class_reader.accept visitor_object, 0
+      begin
+        construct = org.objectweb.asm::ClassReader.java_class.constructor(java.io.InputStream)
+        class_reader = (construct.new_instance file_input_stream).to_java
+        result = class_reader.accept(visitor_object, 0)
+      rescue Exception => e
+        pp "EXCEPTION ------------------------------------", e
+        pp e.backtrace
+      end
+      result
     end
 
     def name_to_inputstream filename
@@ -180,6 +188,15 @@ module AsmSupport
 
     def build_for_filename filename
       inputstream = name_to_inputstream filename
+      build_for_inputstream inputstream
+    end
+
+    def build_for_jar_entry jarfile, jarentry
+      i = jarfile.get_input_stream jarentry
+      build_for_inputstream i
+    end
+
+    def build_for_inputstream inputstream
       visitor = @visitor_class.new
       build visitor, inputstream
       visitor.get_result

@@ -1,4 +1,6 @@
+require 'rubygems'
 require 'asm_support'
+require 'rake'
 require 'pp'
 
 include AsmSupport
@@ -15,8 +17,10 @@ ARGV.each do |arg|
   if Class === new_klass
     klass = new_klass
   else
-    builder = RubyInterfaceImplementationBuilder.new klass
-    result = builder.build_for_filename arg
-    puts result
+    Dir.glob arg do |d|
+      builder = RubyInterfaceImplementationBuilder.new klass
+      result = builder.build_for_filename d
+      puts result
+    end
   end
 end
