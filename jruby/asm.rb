@@ -8,8 +8,16 @@ include AsmSupport
 # Default to PrinterVisitor
 klass = PrinterVisitor
 
+args = ARGV.dup
+args = args.map do |a|
+  if a =~ /\*/
+    Dir.glob a
+  else
+    a
+  end
+end
 # Loop through each .class file given on the command line
-ARGV.each do |arg|
+args.flatten.each do |arg|
   begin
     new_klass = eval arg
   rescue Exception => exc
